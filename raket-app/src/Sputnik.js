@@ -10,6 +10,7 @@ class Sputnik extends React.Component {
     let translateDeg = parseInt(Math.round(Math.random() * 360));
     let width = this.props.orbitRadius * 2;
     this.state = {
+      sputnikGraphic: this.props.sputnikGraphic ? this.props.sputnikGraphic : sputnikGraphic,
       coordX: 0,
       coordY: 0,
       translateDeg: translateDeg,
@@ -20,14 +21,15 @@ class Sputnik extends React.Component {
   }
 
   componentDidMount() {
-    //this.timerID = setInterval(() => this.timerTick, 100);
+    this.timerID = setInterval(() => this.timerTick(), 50);
   }
 
   componentWillUnmount() {
-    //this.timerID = clearInterval(this.timerID);
+    this.timerID = clearInterval(this.timerID);
   }
 
   timerTick() {
+    /*
     let prevX = this.state.coordX;
     let prevY = this.state.coordY;
 
@@ -53,15 +55,23 @@ class Sputnik extends React.Component {
     actualX = r * Math.sin(angle);
     actualY = r * Math.cos(angle);
 
-    this.setState({ coordX: actualX, coordY: actualY });
+    */
+    let newTranslateDeg = parseInt(this.state.translateDeg) + (Math.ceil(this.props.velocity / 8) * 1);
+    //console.log(this.props.velocity);
+    let newCssStyle = Object.assign({}, this.state.cssStyle, { transform: 'rotate('+newTranslateDeg+'deg)' }) ;
+    this.setState({ translateDeg: newTranslateDeg, cssStyle: newCssStyle });
+
+    //console.log("timer tick " + newTranslateDeg);
+    //console.log(newCssStyle);
+
+    //this.setState({ coordX: actualX, coordY: actualY });
   }
 
   render() {
-
     return (
       <div>
         <Orbit coordX={this.props.orbitCoordX} coordY={this.props.orbitCoordY} radius={this.props.orbitRadius} />
-        <div className="st-sputnik" style={this.state.cssStyle}><img style={this.state.imgStyle} src={sputnikGraphic} alt="Sputnik" />
+        <div className="st-sputnik" style={this.state.cssStyle}><img style={this.state.imgStyle} src={this.state.sputnikGraphic} alt="Sputnik" />
 
         </div>
       </div>
