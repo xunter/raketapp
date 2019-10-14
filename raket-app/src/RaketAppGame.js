@@ -1,5 +1,6 @@
 import React from 'react';
 import Earth from './Earth.js';
+import Ship from './Ship.js';
 import Sputnik from './Sputnik.js';
 import Moon from './Moon.js';
 
@@ -11,7 +12,9 @@ class RaketAppGame extends React.Component {
   render() {
     return (
       <div className="st-space">
-        <Earth />
+        <Earth>
+          <Ship />
+        </Earth>
         <Moon orbitRadius="500" orbitCoordX="0" orbitCoordY="0" />
         <Sputnik orbitRadius="300" orbitCoordX="40" orbitCoordY="40" />
         <Sputnik orbitRadius="300" orbitCoordX="0" orbitCoordY="0" />
