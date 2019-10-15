@@ -61,6 +61,7 @@ class Sputnik extends React.Component {
     let newCssStyle = Object.assign({}, this.state.cssStyle, { transform: 'rotate('+newTranslateDeg+'deg)' }) ;
     this.setState({ translateDeg: newTranslateDeg, cssStyle: newCssStyle });
 
+    this.props.shiftingCallback(this.props, this.state);
     //console.log("timer tick " + newTranslateDeg);
     //console.log(newCssStyle);
 

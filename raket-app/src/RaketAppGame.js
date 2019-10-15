@@ -3,6 +3,7 @@ import Earth from './Earth.js';
 import Ship from './Ship.js';
 import Sputnik from './Sputnik.js';
 import Moon from './Moon.js';
+import { offset } from './utils.js';
 
 import SputnikVelocityBar from './SputnikVelocityBar.jsx';
 
@@ -14,7 +15,7 @@ class RaketAppGame extends React.Component {
     super(props);
 
     this.state = {
-      ship: { launched: 0 },
+      ship: { launched: 0, crashed: false, currentOffset: null, currentWidth: null, currentHeight: null },
       moon: {velocity:2, orbitRadius:500, initialArcPos: parseInt(Math.round(Math.random() * 360))},
         sputniks: [
           /*{key: 1, velocity: 15, orbitRadius: SPUTNIK_ORBIT_RADIUS, orbitCoordX: 0, orbitCoordY: 0 },
@@ -28,12 +29,62 @@ class RaketAppGame extends React.Component {
     };
   }
 
+moonShiftingCallback = (moonProps, moonState) => {};
+sputnikShiftingCallback = (sputnikProps, sputnikState) => {
+  //let sputnik = this.state.sputniks.find((s) => s.key === sputnikProps.key);
+  //this.setSputnikState(sputnik, { currentArcShiftAngle: sputnikState.translateDeg });
+};
+
 shipRunningCallback = (shipElement, shipOffset) => {
 
+  let sputnikElements = document.getElementsByClassName("st-sputnik");
+
+  let shipCrashed = this.state.ship.crashed;
+if (shipCrashed) return;
+  let rleft = shipOffset.left;
+  let rtop = shipOffset.top;
+
+let rwidth = shipElement.offsetWidth;
+let rheight = shipElement.offsetHeight;
+
+  //let rrect = shipElement.getBoundingClientRect();
+
+  for (let i = 0; i < sputnikElements.length; i++) {
+    if (shipCrashed) continue;
+    let sputnikElement = sputnikElements[i];
+    let sputnikElementImg = sputnikElement.firstChild;
+    let sputnikElementOffset = offset(sputnikElementImg);
+    let sleft = sputnikElementOffset.left;
+    let stop = sputnikElementOffset.top;
+    //let srect = sputnikElementImg.getBoundingClientRect();
+
+    let sputnikElementHeight = sputnikElementImg.offsetHeight;
+    let sputnikElementWidth = sputnikElementImg.offsetWidth;
+
+    let sheight = sputnikElementHeight;
+    let swidth = sputnikElementWidth;
+
+    if (Math.abs(sleft - rleft) <= swidth && Math.abs(stop - rtop) <= sheight) {
+      shipCrashed = true;
+    }
+
+
+
+
+  }
+
+  this.setState({ ship: Object.assign({}, this.state.ship, { crashed: shipCrashed, launched: !shipCrashed, currentOffset: shipOffset, currentHeight: shipElement.offsetHeight, offsetWidth: shipElement.offsetWidth }) });
+
+
+  if (shipCrashed) {
+    alert("«Произошло столкновение»");
+    window.location.reload(true);
+  }
 };
 
 shipSpaceLeftCallback = () => {
   alert("«Ракета успешно вышла в открытый космос»");
+  window.location.reload(true);
 };
 
 handleRun = () => {
@@ -43,6 +94,17 @@ handleRun = () => {
   handleMoonVelocityChanged = (moon, velocityNextValue) => {
     this.setState({ moon: { velocity: velocityNextValue } });
   };
+
+setSputnikState = (sputnik, stateChange) => {
+  let sputnikIndex = this.state.sputniks.indexOf(sputnik);
+  let sputnikFromCollection = this.state.sputniks[sputnikIndex];
+  let sputnikModified = Object.assign({}, sputnikFromCollection, stateChange);
+  let sputniksModified = [...this.state.sputniks.slice(0, sputnikIndex), sputnikModified, ...this.state.sputniks.slice(sputnikIndex + 1, this.state.sputniks.length)];
+  //let newSputniksArray = [...this.state.sputniks];
+  //newSputniksArray.push(newSputnik);
+
+  this.setState({ sputniks: sputniksModified });
+};
 
 handleVelocityChanged = (sputnik, velocityNextValue) => {
   let sputnikIndex = this.state.sputniks.indexOf(sputnik);
@@ -78,7 +140,7 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
   };
 
   render() {
-    var sputniks = this.state.sputniks.map((s) => <Sputnik initialArcPos={s.initialArcPos} key={s.key} orbitRadius={s.orbitRadius} orbitCoordX={s.orbitCoordX} orbitCoordY={s.orbitCoordY} velocity={s.velocity} angleTickChanged={this.sputnikAngleTickChanged} />);
+    var sputniks = this.state.sputniks.map((s) => <Sputnik initialArcPos={s.initialArcPos} key={s.key} shiftingCallback={this.sputnikShiftingCallback} orbitRadius={s.orbitRadius} orbitCoordX={s.orbitCoordX} orbitCoordY={s.orbitCoordY} velocity={s.velocity} angleTickChanged={this.sputnikAngleTickChanged} />);
 
     let sputnikConfigs = this.state.sputniks.map((s, index) => {
       return (
@@ -102,7 +164,7 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
           <Earth>
             <Ship launched={this.state.ship.launched} spaceLeftCallback={this.shipSpaceLeftCallback} runningCallback={this.shipRunningCallback} />
           </Earth>
-          <Moon initialArcPos={this.state.moon.initialArcPos} orbitRadius={this.state.moon.orbitRadius} orbitCoordX="0" orbitCoordY="0" velocity={this.state.moon.velocity} angleTickChanged={this.moonAngleTickChanged} />
+          <Moon shiftingCallback={this.moonShiftingCallback} initialArcPos={this.state.moon.initialArcPos} orbitRadius={this.state.moon.orbitRadius} orbitCoordX="0" orbitCoordY="0" velocity={this.state.moon.velocity} angleTickChanged={this.moonAngleTickChanged} />
           {sputniks}
         </div>
 
