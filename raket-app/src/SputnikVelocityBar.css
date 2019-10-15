@@ -1,0 +1,19 @@
+.st-sputnik-velocity-bar {
+  margin-top:20px;
+  margin-bottom:20px;
+  position:relative;
+  border-radius: 5px;
+  background:#5a2e9b;
+  width:100%;
+  height:10px;
+
+}
+.st-sputnik-velocity-bar button {
+  position: absolute;
+  left:0;
+  top:0;
+  transform: translate(50%, -35%);
+  width:4%;
+  height:300%;
+  z-index: 3;
+}

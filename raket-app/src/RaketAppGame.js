@@ -4,6 +4,8 @@ import Ship from './Ship.js';
 import Sputnik from './Sputnik.js';
 import Moon from './Moon.js';
 
+import SputnikVelocityBar from './SputnikVelocityBar.jsx';
+
 const SPUTNIK_ORBIT_RADIUS = 300;
 const MOON_ORBIT_RADIUS = 500;
 
@@ -24,11 +26,22 @@ class RaketAppGame extends React.Component {
     };
   }
 
+handleVelocityChanged = (sputnik, velocityNextValue) => {
+  let sputnikIndex = this.state.sputniks.indexOf(sputnik);
+  let sputnikFromCollection = this.state.sputniks[sputnikIndex];
+  let sputnikModified = Object.assign({}, sputnikFromCollection, { velocity: velocityNextValue });
+  let sputniksModified = [...this.state.sputniks.slice(0, sputnikIndex), sputnikModified, ...this.state.sputniks.slice(sputnikIndex + 1, this.state.sputniks.length)];
+  //let newSputniksArray = [...this.state.sputniks];
+  //newSputniksArray.push(newSputnik);
+
+  this.setState({ sputniks: sputniksModified });
+};
+
   handleAddSputnik = () => {
     console.log("handleAddSputnik");
     let newSputnik = {
       key: new Date().getTime(),
-      velocity: 1 + Math.floor(Math.random() * 29),
+      velocity: 1 + Math.floor(Math.random() * 24),
       orbitRadius: SPUTNIK_ORBIT_RADIUS,
       orbitCoordX: -50 + Math.random() * 100,
       orbitCoordY: -50 + Math.random() * 100,
@@ -46,20 +59,18 @@ class RaketAppGame extends React.Component {
   };
 
   render() {
-    var sputniks = this.state.sputniks.map((s) => <Sputnik orbitRadius={s.orbitRadius} orbitCoordX={s.orbitCoordX} orbitCoordY={s.orbitCoordY} velocity={s.velocity} />);
+    var sputniks = this.state.sputniks.map((s) => <Sputnik key={s.key} orbitRadius={s.orbitRadius} orbitCoordX={s.orbitCoordX} orbitCoordY={s.orbitCoordY} velocity={s.velocity} />);
 
     let sputnikConfigs = this.state.sputniks.map((s, index) => {
       return (
-        <div className="bar-sputnik-config" style={{width:'20%', margin:'2% 0'}}>
+        <div key={s.key} className="bar-sputnik-config" style={{width:'20%', margin:'2% 0'}}>
           <div>
             <span><strong>Спутник {index + 1}</strong></span>
             <span style={{float:'right', color:'gray'}}>v : {s.velocity}</span>
           </div>
 
           <div>
-            <div class="bar-sputnik-velocity">
-
-            </div>
+            <SputnikVelocityBar sputnik={s} handleVelocityChanged={this.handleVelocityChanged} />
           </div>
         </div>
       );
