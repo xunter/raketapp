@@ -14,6 +14,7 @@ class RaketAppGame extends React.Component {
     super(props);
 
     this.state = {
+      moon: {velocity:2},
         sputniks: [
           /*{key: 1, velocity: 15, orbitRadius: SPUTNIK_ORBIT_RADIUS, orbitCoordX: 0, orbitCoordY: 0 },
           {key: 2, velocity: 20, orbitRadius: SPUTNIK_ORBIT_RADIUS, orbitCoordX: 0, orbitCoordY: 40 },
@@ -25,6 +26,10 @@ class RaketAppGame extends React.Component {
         ]
     };
   }
+
+  handleMoonVelocityChanged = (moon, velocityNextValue) => {
+    this.setState({ moon: { velocity: velocityNextValue } });
+  };
 
 handleVelocityChanged = (sputnik, velocityNextValue) => {
   let sputnikIndex = this.state.sputniks.indexOf(sputnik);
@@ -83,7 +88,7 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
           <Earth>
             <Ship />
           </Earth>
-          <Moon orbitRadius="500" orbitCoordX="0" orbitCoordY="0" velocity="1" />
+          <Moon orbitRadius="500" orbitCoordX="0" orbitCoordY="0" velocity={this.state.moon.velocity} />
           {sputniks}
         </div>
 
@@ -96,12 +101,21 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
 
 
           <div className="bar-sputnik-config">
-
+            {sputnikConfigs}
           </div>
 
-          {sputnikConfigs}
 
           <div className="bar-moon-config">
+            <div className="bar-sputnik-config" style={{width:'20%', margin:'2% 0'}}>
+              <div>
+                <span><strong>Луна</strong></span>
+                <span style={{float:'right', color:'gray'}}>v : {this.state.moon.velocity}</span>
+              </div>
+
+              <div>
+                <SputnikVelocityBar sputnik={this.state.moon} handleVelocityChanged={this.handleMoonVelocityChanged} />
+              </div>
+            </div>
           </div>
 
           <div className="btn-run-container">
