@@ -7,7 +7,7 @@ class Sputnik extends React.Component {
   constructor(props) {
     super(props);
 
-    let translateDeg = parseInt(Math.round(Math.random() * 360));
+    let translateDeg = this.props.initialArcPos;
     let width = this.props.orbitRadius * 2;
     this.state = {
       sputnikGraphic: this.props.sputnikGraphic ? this.props.sputnikGraphic : sputnikGraphic,

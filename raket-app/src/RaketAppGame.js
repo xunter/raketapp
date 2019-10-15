@@ -14,7 +14,8 @@ class RaketAppGame extends React.Component {
     super(props);
 
     this.state = {
-      moon: {velocity:2},
+      ship: { launched: 0 },
+      moon: {velocity:2, orbitRadius:500, initialArcPos: parseInt(Math.round(Math.random() * 360))},
         sputniks: [
           /*{key: 1, velocity: 15, orbitRadius: SPUTNIK_ORBIT_RADIUS, orbitCoordX: 0, orbitCoordY: 0 },
           {key: 2, velocity: 20, orbitRadius: SPUTNIK_ORBIT_RADIUS, orbitCoordX: 0, orbitCoordY: 40 },
@@ -26,6 +27,18 @@ class RaketAppGame extends React.Component {
         ]
     };
   }
+
+shipRunningCallback = (shipElement, shipOffset) => {
+
+};
+
+shipSpaceLeftCallback = () => {
+  alert("«Ракета успешно вышла в открытый космос»");
+};
+
+handleRun = () => {
+  this.setState({ ship: { launched: 1 } });
+};
 
   handleMoonVelocityChanged = (moon, velocityNextValue) => {
     this.setState({ moon: { velocity: velocityNextValue } });
@@ -46,6 +59,7 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
     console.log("handleAddSputnik");
     let newSputnik = {
       key: new Date().getTime(),
+      initialArcPos: parseInt(Math.round(Math.random() * 360)),
       velocity: 1 + Math.floor(Math.random() * 24),
       orbitRadius: SPUTNIK_ORBIT_RADIUS,
       orbitCoordX: -50 + Math.random() * 100,
@@ -64,7 +78,7 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
   };
 
   render() {
-    var sputniks = this.state.sputniks.map((s) => <Sputnik key={s.key} orbitRadius={s.orbitRadius} orbitCoordX={s.orbitCoordX} orbitCoordY={s.orbitCoordY} velocity={s.velocity} />);
+    var sputniks = this.state.sputniks.map((s) => <Sputnik initialArcPos={s.initialArcPos} key={s.key} orbitRadius={s.orbitRadius} orbitCoordX={s.orbitCoordX} orbitCoordY={s.orbitCoordY} velocity={s.velocity} angleTickChanged={this.sputnikAngleTickChanged} />);
 
     let sputnikConfigs = this.state.sputniks.map((s, index) => {
       return (
@@ -86,9 +100,9 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
 
         <div className="game-layer">
           <Earth>
-            <Ship />
+            <Ship launched={this.state.ship.launched} spaceLeftCallback={this.shipSpaceLeftCallback} runningCallback={this.shipRunningCallback} />
           </Earth>
-          <Moon orbitRadius="500" orbitCoordX="0" orbitCoordY="0" velocity={this.state.moon.velocity} />
+          <Moon initialArcPos={this.state.moon.initialArcPos} orbitRadius={this.state.moon.orbitRadius} orbitCoordX="0" orbitCoordY="0" velocity={this.state.moon.velocity} angleTickChanged={this.moonAngleTickChanged} />
           {sputniks}
         </div>
 
@@ -105,8 +119,8 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
           </div>
 
 
-          <div className="bar-moon-config">
-            <div className="bar-sputnik-config" style={{width:'20%', margin:'2% 0'}}>
+
+            <div className="bar-moon-config">
               <div>
                 <span><strong>Луна</strong></span>
                 <span style={{float:'right', color:'gray'}}>v : {this.state.moon.velocity}</span>
@@ -116,10 +130,9 @@ handleVelocityChanged = (sputnik, velocityNextValue) => {
                 <SputnikVelocityBar sputnik={this.state.moon} handleVelocityChanged={this.handleMoonVelocityChanged} />
               </div>
             </div>
-          </div>
 
           <div className="btn-run-container">
-            <button type="button">Запуск</button>
+            <button type="button" onClick={this.handleRun} style={{display:this.state.ship.launched ? 'none' : ''}}>Запуск</button>
           </div>
         </div>
       </div>

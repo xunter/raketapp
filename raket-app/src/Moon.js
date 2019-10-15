@@ -14,7 +14,7 @@ class Moon extends React.Component {
   render() {
 
     return (
-      <Sputnik orbitCoordX={this.props.orbitCoordX} orbitCoordY={this.props.orbitCoordY} orbitRadius={this.props.orbitRadius} velocity={this.props.velocity} sputnikGraphic={moonGraphic} />
+      <Sputnik initialArcPos={this.props.initialArcPos} orbitCoordX={this.props.orbitCoordX} orbitCoordY={this.props.orbitCoordY} orbitRadius={this.props.orbitRadius} velocity={this.props.velocity} sputnikGraphic={moonGraphic} />
     );
   }
 }

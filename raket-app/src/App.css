@@ -45,7 +45,6 @@ html,body,#root {
 .st-ship {
   position:absolute;
   left:50%;
-  top:13%;
   transform: translate(-50%, -50%);
 }
 .btn-run-container {
@@ -61,7 +60,8 @@ html,body,#root {
     left:2%;
     bottom:0;
     transform:translate(0%, -100%);
-    width:100%;
+    width:20%;
+    margin:2% 0;
     z-index:2;
 }
 .game-layer {
